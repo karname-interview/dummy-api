@@ -1,8 +1,8 @@
 stages:
     - check-env
     - build
+    - test
     - deploy
-
 
 variables:
     IMAGE_TAG: $CI_PIPELINE_ID-$CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
@@ -37,6 +37,23 @@ build:
         - echo "build and push new image:"
         - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile
             --insecure --skip-tls-verify --destination $IMAGE_URL:$IMAGE_TAG
+
+run-migrations:
+    image:
+        name: $BIGDATA_REG_URL/infra/christophwurst/diesel-cli:v1.0.0 
+    stage: test
+    only:
+        refs:
+            - master
+            - stg
+            - dev
+    except:
+        changes:
+            - "*.md"
+    before_script:
+      - DATABASE_URL=postgres://alan:touring@ki-dev-dummy-rsc-postgresql.ki-dev-dummy/alan_touring
+    script:
+      - diesel migration run 
 
 prd:update-manifests:
     stage: deploy
