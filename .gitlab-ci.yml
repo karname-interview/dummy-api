@@ -19,24 +19,24 @@ var-check:
         - echo "image url == $IMAGE_URL"
         - echo "dag repo === $DAG_REPO"
 
-build:
-    image:
-        name: $BIGDATA_REG_URL/kaniko:debug
-        entrypoint: [""]
-    stage: build
-    only:
-        refs:
-            - master
-            - stg
-            - dev
-    except:
-        changes:
-            - "*.md"
-    script:
-        - echo build and push image $IMAGE_URL:$IMAGE_TAG
-        - echo "build and push new image:"
-        - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile
-            --insecure --skip-tls-verify --destination $IMAGE_URL:$IMAGE_TAG
+# build:
+#     image:
+#         name: $BIGDATA_REG_URL/kaniko:debug
+#         entrypoint: [""]
+#     stage: build
+#     only:
+#         refs:
+#             - master
+#             - stg
+#             - dev
+#     except:
+#         changes:
+#             - "*.md"
+#     script:
+#         - echo build and push image $IMAGE_URL:$IMAGE_TAG
+#         - echo "build and push new image:"
+#         - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile
+#             --insecure --skip-tls-verify --destination $IMAGE_URL:$IMAGE_TAG
 
 run-migrations:
     image:
@@ -51,7 +51,7 @@ run-migrations:
         changes:
             - "*.md"
     before_script:
-      - DATABASE_URL=postgres://alan:touring@ki-dev-dummy-rsc-postgresql.ki-dev-dummy/alan_touring
+      - export DATABASE_URL=postgres://alan:touring@ki-dev-dummy-rsc-postgresql.ki-dev-dummy/alan_touring
     script:
       - diesel migration run 
 
