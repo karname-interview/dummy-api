@@ -51,12 +51,13 @@ prd:update-manifests:
         - echo "update image version of the manifest in the git repo"
         - CD_REPO=$CD_REPO_BASE_PATH/$CI_PROJECT_PATH.git
         - DEPLOY_ENV=prd
+        - IMAGE_PLACEHOLDER=cicd-image-place-holder
     script:
         - echo "update manifest repo:"
         - cd /tmp
         - git clone $CD_REPO
         - cd $CI_PROJECT_NAME/environments/$DEPLOY_ENV
-        - kustomize edit set image $IMAGE_URL:$IMAGE_TAG
+        - kustomize edit set image $IMAGE_PLACEHOLDER=$IMAGE_URL:$IMAGE_TAG
         - git add kustomization.yml
         - git config user.email "cicd@bigdata.digikala.com"
         - git config user.name "cicd"
@@ -76,12 +77,13 @@ stg:update-manifests:
         - echo "update image version of the manifest in the git repo"
         - CD_REPO=$CD_REPO_BASE_PATH/$CI_PROJECT_PATH.git
         - DEPLOY_ENV=stg
+        - IMAGE_PLACEHOLDER=cicd-image-place-holder
     script:
         - echo "update manifest repo:"
         - cd /tmp
         - git clone $CD_REPO
         - cd $CI_PROJECT_NAME/environments/$DEPLOY_ENV
-        - kustomize edit set image $IMAGE_URL:$IMAGE_TAG
+        - kustomize edit set image $IMAGE_PLACEHOLDER=$IMAGE_URL:$IMAGE_TAG
         - git add kustomization.yml
         - git config user.email "cicd@bigdata.digikala.com"
         - git config user.name "cicd"
