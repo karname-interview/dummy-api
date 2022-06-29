@@ -55,6 +55,23 @@ run-migrations:
     script:
       - diesel migration run 
 
+tests:
+    image:
+        name: rust:1.61-buster
+        entrypoint: [""]
+    stage: test
+    only:
+        refs:
+            - master
+            - stg
+            - dev
+    except:
+        changes:
+            - "*.md"
+    script:
+      - cargo test
+
+
 prd:update-manifests:
     stage: deploy
     image:
