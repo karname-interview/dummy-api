@@ -3,7 +3,6 @@ stages:
     - build
     - deploy
 
-
 variables:
     IMAGE_TAG: $CI_PIPELINE_ID-$CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
     IMAGE_URL: $BIGDATA_REG_URL/$CI_PROJECT_PATH
