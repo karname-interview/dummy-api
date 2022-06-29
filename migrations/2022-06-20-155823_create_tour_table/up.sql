@@ -1,0 +1,9 @@
+-- Your SQL goes here
+CREATE TABLE tours (
+  id UUID PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  src VARCHAR NOT NULL,
+  dst VARCHAR NOT NULL,
+  total_days INTEGER NOT NULL DEFAULT '1'
+)
+
