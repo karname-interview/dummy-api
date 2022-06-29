@@ -1,0 +1,113 @@
+stages:
+    - check-env
+    - build
+    - deploy
+
+variables:
+    IMAGE_TAG: $CI_PIPELINE_ID-$CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
+    IMAGE_URL: $BIGDATA_REG_URL/$CI_PROJECT_PATH
+
+var-check:
+    stage: check-env
+    image:
+        name: alpine:latest
+        entrypoint: [""]
+    script:
+        - echo "reg ====== $BIGDATA_REG_URL"
+        - echo "image tag == $IMAGE_TAG"
+        - echo "image url == $IMAGE_URL"
+        - echo "dag repo === $DAG_REPO"
+
+build:
+    image:
+        name: $BIGDATA_REG_URL/kaniko:debug
+        entrypoint: [""]
+    stage: build
+    only:
+        refs:
+            - master
+            - stg
+            - dev
+    except:
+        changes:
+            - "*.md"
+    script:
+        - echo build and push image $IMAGE_URL:$IMAGE_TAG
+        - echo "build and push new image:"
+        - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile
+            --insecure --skip-tls-verify --destination $IMAGE_URL:$IMAGE_TAG
+
+prd:update-manifests:
+    stage: deploy
+    image:
+        name: rm-bd-registry-01.bigdata.digikala.com/infra/kustomize:1.0.0
+        entrypoint: [""]
+    only:
+        refs:
+            - master
+    when: manual
+    before_script:
+        - echo "update image version of the manifest in the git repo"
+        - CD_REPO=$CD_REPO_BASE_PATH/$CI_PROJECT_PATH.git
+        - DEPLOY_ENV=prd
+    script:
+        - echo "update manifest repo:"
+        - cd /tmp
+        - git clone $CD_REPO
+        - cd $CI_PROJECT_NAME/environments/$DEPLOY_ENV
+        - kustomize edit set image $IMAGE_URL:$IMAGE_TAG
+        - git add kustomization.yml
+        - git config user.email "cicd@bigdata.digikala.com"
+        - git config user.name "cicd"
+        - git commit -m "update image for CD related to $CI_PROJECT_NAME"
+        - git push
+
+stg:update-manifests:
+    stage: deploy
+    image:
+        name: rm-bd-registry-01.bigdata.digikala.com/infra/kustomize:1.0.0
+        entrypoint: [""]
+    only:
+        refs:
+            - stg
+    when: manual
+    before_script:
+        - echo "update image version of the manifest in the git repo"
+        - CD_REPO=$CD_REPO_BASE_PATH/$CI_PROJECT_PATH.git
+        - DEPLOY_ENV=stg
+    script:
+        - echo "update manifest repo:"
+        - cd /tmp
+        - git clone $CD_REPO
+        - cd $CI_PROJECT_NAME/environments/$DEPLOY_ENV
+        - kustomize edit set image $IMAGE_URL:$IMAGE_TAG
+        - git add kustomization.yml
+        - git config user.email "cicd@bigdata.digikala.com"
+        - git config user.name "cicd"
+        - git commit -m "update image for CD related to $CI_PROJECT_NAME"
+        - git push
+
+dev:update-manifests:
+    stage: deploy
+    image:
+        name: rm-bd-registry-01.bigdata.digikala.com/infra/kustomize:1.0.0
+        entrypoint: [""]
+    only:
+        refs:
+            - dev
+    when: manual
+    before_script:
+        - echo "update image version of the manifest in the git repo"
+        - CD_REPO=$CD_REPO_BASE_PATH/$CI_PROJECT_PATH.git
+        - DEPLOY_ENV=dev
+    script:
+        - echo "update manifest repo:"
+        - cd /tmp
+        - git clone $CD_REPO
+        - cd $CI_PROJECT_NAME/environments/$DEPLOY_ENV
+        - kustomize edit set image $IMAGE_URL:$IMAGE_TAG
+        - git add kustomization.yml
+        - git config user.email "cicd@bigdata.digikala.com"
+        - git config user.name "cicd"
+        - git commit -m "update image for CD related to $CI_PROJECT_NAME"
+        - git push
