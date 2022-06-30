@@ -52,7 +52,7 @@ run-migrations:
         changes:
             - "*.md"
     before_script:
-      - DATABASE_URL=postgres://alan:touring@ki-stg-dummy-rsc-postgresql.ki-stg-dummy/alan_touring
+      - export DATABASE_URL=postgres://alan:touring@ki-stg-dummy-rsc-postgresql.ki-stg-dummy/alan_touring
     script:
       - diesel migration run 
 
