@@ -81,6 +81,8 @@ prd:update-manifests:
     only:
         refs:
             - master
+    dependencies:
+        - run-migrations
     before_script:
         - echo "update image version of the manifest in the git repo"
         - CD_REPO=$CD_REPO_BASE_PATH/$CI_PROJECT_PATH.git
