@@ -1,6 +1,7 @@
 stages:
     - check-env
     - build
+    - test
     - deploy
 
 
@@ -55,6 +56,22 @@ run-migrations:
       - DATABASE_URL=postgres://alan:touring@ki-dev-dummy-rsc-postgresql.ki-stg-dummy/alan_touring
     script:
       - diesel migration run 
+
+tests:
+    image:
+        name: rust:1.61-buster
+        entrypoint: [""]
+    stage: test
+    only:
+        refs:
+            - master
+            - stg
+            - dev
+    except:
+        changes:
+            - "*.md"
+    script:
+      - cargo test
 
 prd:update-manifests:
     stage: deploy
