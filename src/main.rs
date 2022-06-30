@@ -27,7 +27,10 @@ use crate::actors::{Create, Delete, GetAll, Update};
 use actors::DbActor;
 use models::TourData;
 
+/// State used in the router
 pub struct AppState {
+    /// Address to the DbActor
+    /// Used when trying to commiunicate with the Actor
     pub db: Addr<DbActor>,
 }
 

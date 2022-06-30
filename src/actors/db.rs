@@ -9,6 +9,7 @@ use diesel::{
 
 use super::{Create, Delete, GetAll, Update};
 
+/// Actor for comminiucating with DataBase
 pub struct DbActor {
     pub pool: Pool<ConnectionManager<PgConnection>>,
 }
@@ -16,6 +17,8 @@ pub struct DbActor {
 impl Actor for DbActor {
     type Context = SyncContext<Self>;
 }
+
+// handle impls for Message types
 
 impl Handler<Create> for DbActor {
     type Result = QueryResult<Tour>;
