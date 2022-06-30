@@ -81,7 +81,7 @@ prd:update-manifests:
     only:
         refs:
             - master
-    dependencies:
+    needs:
         - run-migrations
     before_script:
         - echo "update image version of the manifest in the git repo"
