@@ -38,23 +38,6 @@ build:
         - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile
             --insecure --skip-tls-verify --destination $IMAGE_URL:$IMAGE_TAG
 
-run-migrations:
-    image:
-        name: $BIGDATA_REG_URL/infra/christophwurst/diesel-cli:v1.0.0 
-    stage: test
-    only:
-        refs:
-            - master
-            - stg
-            - dev
-    except:
-        changes:
-            - "*.md"
-    before_script:
-      - export DATABASE_URL=postgres://alan:touring@ki-dev-dummy-rsc-postgresql.ki-dev-dummy/alan_touring
-    script:
-      - diesel migration run 
-
 tests:
     image:
         name: rust:1.61-buster
@@ -70,6 +53,23 @@ tests:
             - "*.md"
     script:
       - cargo test
+
+run-migrations:
+    image:
+        name: $BIGDATA_REG_URL/infra/christophwurst/diesel-cli:v1.0.0 
+    stage: deploy
+    only:
+        refs:
+            - master
+            - stg
+            - dev
+    except:
+        changes:
+            - "*.md"
+    before_script:
+      - export DATABASE_URL=postgres://alan:touring@ki-dev-dummy-rsc-postgresql.ki-dev-dummy/alan_touring
+    script:
+      - diesel migration run 
 
 dev:update-manifests:
     stage: deploy
