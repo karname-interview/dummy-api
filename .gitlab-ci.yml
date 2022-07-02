@@ -74,7 +74,7 @@ tests:
 dev:update-manifests:
     stage: deploy
     image:
-        name: rm-bd-registry-01.bigdata.digikala.com/infra/kustomize:1.0.0
+        name: $DOCKER_REG_URL/infra/kustomize:1.0.0
         entrypoint: [""]
     only:
         refs:
@@ -93,7 +93,7 @@ dev:update-manifests:
         - cd $CI_PROJECT_NAME/environments/$DEPLOY_ENV
         - kustomize edit set image $IMAGE_PLACEHOLDER=$IMAGE_URL:$IMAGE_TAG
         - git add kustomization.yml
-        - git config user.email "cicd@bigdata.digikala.com"
+        - git config user.email "cicd@yourcompany.com"
         - git config user.name "cicd"
         - git commit -m "update image for CD related to $CI_PROJECT_NAME"
         - git push
