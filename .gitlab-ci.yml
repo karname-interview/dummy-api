@@ -6,7 +6,7 @@ stages:
 
 variables:
     IMAGE_TAG: $CI_PIPELINE_ID-$CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
-    IMAGE_URL: $BIGDATA_REG_URL/$CI_PROJECT_PATH
+    IMAGE_URL: $DOCKER_REG_URL/$CI_PROJECT_PATH
 
 var-check:
     stage: check-env
@@ -14,14 +14,14 @@ var-check:
         name: alpine:3.16.0
         entrypoint: [""]
     script:
-        - echo "reg ====== $BIGDATA_REG_URL"
+        - echo "reg ====== $DOCKER_REG_URL"
         - echo "image tag == $IMAGE_TAG"
         - echo "image url == $IMAGE_URL"
         - echo "dag repo === $DAG_REPO"
 
 build:
     image:
-        name: $BIGDATA_REG_URL/kaniko:debug
+        name: $DOCKER_REG_URL/kaniko:debug
         entrypoint: [""]
     stage: build
     only:
@@ -40,7 +40,7 @@ build:
 
 run-migrations:
     image:
-        name: $BIGDATA_REG_URL/infra/christophwurst/diesel-cli:v1.0.0 
+        name: christophwurst/diesel-cli:v1.0.0 
     stage: test
     only:
         refs:
